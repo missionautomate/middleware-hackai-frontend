@@ -57,6 +57,10 @@ h2 {
   height: 600px;
 }
 
+.card-wrapper {
+  cursor: pointer;
+}
+
 .card {
   position: relative;
   background-color: #fff;

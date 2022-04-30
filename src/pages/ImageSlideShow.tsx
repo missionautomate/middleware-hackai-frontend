@@ -5,8 +5,14 @@ import TinderCard from 'react-tinder-card'
 import './../css/CardReview.css'
 import axios from 'axios'
 
-const db = [];
-const revDb = [];
+class PictureData {
+  name: string = '';
+  key?: string = '';
+  url: string = '';
+}
+
+const db: PictureData[] = [];
+const revDb: PictureData[] = [];
 let revIndex = 0;
 
 function ImageSlideShow() {
@@ -37,7 +43,6 @@ function ImageSlideShow() {
       revDb.push(tempUrl);
     }
     setLoading(false);
-
   }
 
   const getRandom = () => {
@@ -58,11 +63,11 @@ function ImageSlideShow() {
   }
 
 
-  const Loading = ({ type, color }) => (
+  const Loading = () => (
     <ReactLoading type={'bars'} color={'#ffffff'} height={667} width={375} />
   );
 
-  const childRefs = useMemo(
+  const childRefs:React.Ref<any>[] = useMemo(
     () =>
       Array(revDb.length)
         .fill(0)
@@ -71,7 +76,7 @@ function ImageSlideShow() {
   )
 
   // set last direction and decrease current index
-  const swiped = async (direction, nameToDelete, index) => {
+  const swiped = async (direction: string, nameToDelete: string, index: number) => {
     if (direction === "right") {
       swipeDir = ("Yey, we are glad you liked it.");
     }
@@ -79,7 +84,7 @@ function ImageSlideShow() {
     revIndex = revIndex + 1;
 
     if (revIndex >= db.length) {
-      window.location.reload(false);
+      window.location.reload();
     }
   }
 
@@ -103,16 +108,17 @@ function ImageSlideShow() {
         <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/160/apple/285/cross-mark_274c.png" height="220px" className="directionF" />
         <div className='cardContainer'>
           {revDb.map((character, index) => (
+            // @ts-ignore
             <TinderCard
               ref={childRefs[index]}
               className='swipe'
               key={character.name}
               onSwipe={(dir) => swiped(dir, character.name, index)}
             >
-              <div>
+              <div className='card-wrapper'>
                 <img className='card' src={character.url} />
               </div>
-            </TinderCard>
+              </TinderCard>
           ))}
         </div>
         <img src="https://emojipedia-us.s3.amazonaws.com/source/skype/289/check-mark_2714-fe0f.png" height="300px" className="directionFN" />
