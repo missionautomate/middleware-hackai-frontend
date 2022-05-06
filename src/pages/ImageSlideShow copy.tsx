@@ -4,6 +4,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import TinderCard from 'react-tinder-card'
 import './../css/CardReview.css'
 import axios from 'axios'
+import { useCookies } from 'react-cookie';
+import { useNavigate } from 'react-router-dom';
 
 class PictureData {
   name: string = '';
@@ -17,11 +19,14 @@ let revIndex = 0;
 
 function ImageSlideShow() {
   let swipeDir;
-  
+  let navigate = useNavigate();
+
   const [isLoading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(revDb.length - 1)
   const [lastDirection, setLastDirection] = useState('')
   const currentIndexRef = useRef(currentIndex)
+  const [cookies, setCookie, removeCookie] = useCookies(['google-token']);
+
   const images = [
     'https://images.unsplash.com/photo-1615789591457-74a63395c990?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8YmFieSUyMGNhdHxlbnwwfHwwfHw%3D&w=1000&q=80',
     'https://cdn.pixabay.com/photo/2014/11/30/14/11/cat-551554__480.jpg',
@@ -30,6 +35,12 @@ function ImageSlideShow() {
   ];
 
   useEffect(() => {
+    if (!('google-token' in cookies)){
+      navigate('/login');
+    }
+
+    // To Test: console.log("cookies", cookies["google-token"]);
+    
     // getImages();
     // OR
     getRandom();
@@ -95,14 +106,6 @@ function ImageSlideShow() {
   return (
 
     <div className="fullC">
-      <link
-        href='https://fonts.googleapis.com/css?family=Damion&display=swap'
-        rel='stylesheet'
-      />
-      <link
-        href='https://fonts.googleapis.com/css?family=Alatsi&display=swap'
-        rel='stylesheet'
-      />
       <h1>Your image based on Cats</h1>
       <div className="row">
         <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/160/apple/285/cross-mark_274c.png" height="220px" className="directionF" />
