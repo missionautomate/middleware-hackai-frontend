@@ -33,12 +33,12 @@ jobs:
         npm install
         npm run build --if-present
 
-    - name: Run unit tests
-      continue-on-error: false
-      run: |
-        cd Tests
-        npm install
-        gulp unittest
+    # - name: Run unit tests
+    #   continue-on-error: false
+    #   run: |
+    #     cd Tests
+    #     npm install
+    #     gulp unittest
 
     - name: Creating artifact directories
       run: |
@@ -126,25 +126,25 @@ jobs:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
-  # Job to run functional tests
-  FunctionalTests:
-    name: Run Functional tests
-    runs-on: windows-latest
-    needs: Deploy
-    steps:
-    - uses: actions/checkout@v2
+  # # Job to run functional tests
+  # FunctionalTests:
+  #   name: Run Functional tests
+  #   runs-on: windows-latest
+  #   needs: Deploy
+  #   steps:
+  #   - uses: actions/checkout@v2
 
-    - name: Use Node.js ${{ env.NODE_VERSION }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ env.NODE_VERSION }}
+  #   - name: Use Node.js ${{ env.NODE_VERSION }}
+  #     uses: actions/setup-node@v1
+  #     with:
+  #       node-version: ${{ env.NODE_VERSION }}
 
-    # Run functional tests
-    - name: Run Functional Tests
-      continue-on-error: false
-      run: |
-        cd Application
-        npm install
-        cd ../Tests
-        npm install
-        gulp functionaltest --webAppUrl https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/
+  #   # Run functional tests
+  #   - name: Run Functional Tests
+  #     continue-on-error: false
+  #     run: |
+  #       cd Application
+  #       npm install
+  #       cd ../Tests
+  #       npm install
+  #       gulp functionaltest --webAppUrl https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/
