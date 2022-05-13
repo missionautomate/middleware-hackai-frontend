@@ -27,7 +27,7 @@ jobs:
         node-version: ${{ env.NODE_VERSION }}
 
     - name: npm install and build
-      continue-on-error: false
+      continue-on-error: true
       run: |
         cd Application
         npm install
