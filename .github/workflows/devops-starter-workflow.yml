@@ -50,9 +50,9 @@ jobs:
     steps:
     # Downloading build artifact
     - name: Download artifact from build job
-        uses: actions/download-artifact@v2
-        with:
-          name: node-app
+      uses: actions/download-artifact@v2
+      with:
+        name: node-app
 
     # Login to azure
     - name: Login to Azure
