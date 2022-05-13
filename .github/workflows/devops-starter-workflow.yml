@@ -2,7 +2,7 @@ name: Build and Deploy node Express app to azure
 on:
   push:
     branches:
-      - master
+      - 25-migrate-frontend-code-id25
 
 env:
   AZURE_WEBAPP_NAME: "middleware-hackai-frontend"    # set this to your application's name
