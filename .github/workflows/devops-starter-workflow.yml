@@ -1,4 +1,4 @@
-name: Build and Deploy node Express app to azure
+name: Build and Deploy React app to azure DevOps
 on:
   push:
     branches:
@@ -7,7 +7,7 @@ on:
 env:
   AZURE_WEBAPP_NAME: "middleware-hackai-frontend"    # set this to your application's name
   AZURE_WEBAPP_PACKAGE_PATH: "Application"      # set this to the path to your web app project, defaults to the repository root
-  NODE_VERSION: '"14.15.x"'                        # set this to the node version to use
+  NODE_VERSION: '"8.1.x"'                        # set this to the node version to use
   RESOURCEGROUPNAME: "middleware-hackai-frontend-rg"
   LOCATION: "South Central US"
   HOSTINGPLANNAME: "middleware-hackai-frontend-plan"
