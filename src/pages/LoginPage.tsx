@@ -41,7 +41,7 @@ function LoginPage() {
     data.push(response['accessToken'])
     data.push(response['profileObj'])
     console.log(data)
-    fetch("http://middleware-hackai-bakcend.azurewebsites.net/login", {
+    fetch("http://middleware-hackai-backend.azurewebsites.net/login", {
       method: "POST",
       headers: {'Content-Type': 'application/json'}, 
       body: JSON.stringify(data)
