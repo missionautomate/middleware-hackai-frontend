@@ -2,15 +2,20 @@ import React, { useState, useMemo, useRef, useEffect } from 'react'
 import ReactLoading from 'react-loading';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import TinderCard from 'react-tinder-card'
-import './../css/CardReview.css'
+import './../../css/CardReview.css'
+import './ImageSlideShow.css'
 import axios from 'axios'
 import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
+import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
+import { Button } from 'reactstrap';
+import path from 'path';
 
-class PictureData {
+export class PictureData {
   name: string = '';
   key?: string = '';
   url: string = '';
+  favorite: boolean =  false;
 }
 
 const db: PictureData[] = [];
@@ -34,6 +39,10 @@ function ImageSlideShow() {
     'https://i.pinimg.com/originals/7e/0a/50/7e0a507de8cf8b46e0f2665f1058ef37.jpg'
   ];
 
+  const navigateTo = (path: string) => () => {
+    return navigate(path);
+  }
+
   useEffect(() => {
     if (!('google-token' in cookies)){
       navigate('/login');
@@ -48,7 +57,8 @@ function ImageSlideShow() {
 
   const getImages = () => {
     for (let i in images) {
-      db.push({ name: `img_${i}`, url: images[i] });
+      const isFavorite = Math.floor(Math.random() * 10)%2 === 0;
+      db.push({ name: `img_${i}`, url: images[i], favorite: isFavorite});
     }
     for (let tempUrl of Array.from(db).reverse()) {
       revDb.push(tempUrl);
@@ -64,7 +74,8 @@ function ImageSlideShow() {
     })
       .then((res) => {
         for (var i in res.data.photos) {
-          db.push({ name: `img_${i}`, url: res.data.photos[i].src.original });
+          const isFavorite = Math.floor(Math.random() * 10)%2 === 0;
+          db.push({ name: `img_${i}`, url: res.data.photos[i].src.original,favorite: isFavorite});
         }
         for (let tempUrl of Array.from(db).reverse()) {
           revDb.push(tempUrl);
@@ -106,6 +117,7 @@ function ImageSlideShow() {
   return (
 
     <div className="fullC">
+      <Button onClick={navigateTo('/favorites')}>Favorites</Button>
       <h1>Your image based on Cats</h1>
       <div className="row">
         <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/160/apple/285/cross-mark_274c.png" height="220px" className="directionF" />
@@ -120,6 +132,10 @@ function ImageSlideShow() {
             >
               <div className='card-wrapper'>
                 <img className='card' src={character.url} />
+                <div className='card__favorite-btn'>
+                {!character.favorite && <AiOutlineHeart></AiOutlineHeart>}
+                {character.favorite && <AiFillHeart></AiFillHeart>}
+                  </div>
               </div>
               </TinderCard>
           ))}
