@@ -8,11 +8,12 @@ import axios from 'axios'
 import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
-import { PictureData } from '../image-slide-show/ImageSlideShow';
+import ImageCard from '../../components/image-card/ImageCard';
+import { PictureData } from '../../models/picture.data';
 
 
-const db: PictureData[] = [];
-const revDb: PictureData[] = [];
+let db: PictureData[] = [];
+let revDb: PictureData[] = [];
 let revIndex = 0;
 
 function Favorites() {
@@ -33,21 +34,23 @@ function Favorites() {
   ];
 
   useEffect(() => {
-    if (!('google-token' in cookies)){
+    if (!('google-token' in cookies)) {
       navigate('/login');
     }
 
     // To Test: console.log("cookies", cookies["google-token"]);
-    
-    // getImages();
+
+    getImages();
     // OR
-    getRandom();
+    // getRandom();
   }, []);
 
   const getImages = () => {
+    db = [];
+    revDb = [];
     for (let i in images) {
-      const isFavorite = Math.floor(Math.random() * 10)%2 === 0;
-      db.push({ name: `img_${i}`, url: images[i], favorite: isFavorite});
+      const isFavorite = Math.floor(Math.random() * 10) % 2 === 0;
+      db.push({ name: `img_${i}`, url: images[i], favorite: isFavorite });
     }
     for (let tempUrl of Array.from(db).reverse()) {
       revDb.push(tempUrl);
@@ -63,8 +66,8 @@ function Favorites() {
     })
       .then((res) => {
         for (var i in res.data.photos) {
-          const isFavorite = Math.floor(Math.random() * 10)%2 === 0;
-          db.push({ name: `img_${i}`, url: res.data.photos[i].src.original, favorite: isFavorite});
+          const isFavorite = Math.floor(Math.random() * 10) % 2 === 0;
+          db.push({ name: `img_${i}`, url: res.data.photos[i].src.original, favorite: isFavorite });
         }
         for (let tempUrl of Array.from(db).reverse()) {
           revDb.push(tempUrl);
@@ -78,7 +81,7 @@ function Favorites() {
     <ReactLoading type={'bars'} color={'#ffffff'} height={667} width={375} />
   );
 
-  const childRefs:React.Ref<any>[] = useMemo(
+  const childRefs: React.Ref<any>[] = useMemo(
     () =>
       Array(revDb.length)
         .fill(0)
@@ -108,19 +111,11 @@ function Favorites() {
     <div className="favorites">
       <h1 className="favorites__title">Your favorite Cats</h1>
       <div className="favorites__container">
-      {revDb.map((character, index) => (
-             <div className='card-wrapper'>
-             <img className='card' src={character.url} />
-             <div className='card__favorite-btn'>
-             {!character.favorite && <AiOutlineHeart></AiOutlineHeart>}
-             {character.favorite && <AiFillHeart></AiFillHeart>}
-               </div>
-           </div>
-      ))
-}
-              
-        </div>
-     
+        {revDb.map((character, index) => (
+          <ImageCard image={character} showLikeBtn={true}></ImageCard>
+        ))
+        }
+      </div>
     </div>
   )
 }

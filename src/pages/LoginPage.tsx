@@ -41,6 +41,8 @@ function LoginPage() {
     data.push(response['accessToken'])
     data.push(response['profileObj'])
     console.log(data)
+    setCookie("google-token", response.tokenObj.id_token, {expires: new Date(response.tokenObj.expires_at), maxAge: response.tokenObj.expires_in});
+
     fetch("http://127.0.0.1:8000/login", {
       method: "POST",
       headers: {'Content-Type': 'application/json'}, 
@@ -49,7 +51,6 @@ function LoginPage() {
       console.log("Request complete! response:", res);
     });
     navigate('/');
-    setCookie("google-token", response.tokenObj.id_token, {expires: new Date(response.tokenObj.expires_at), maxAge: response.tokenObj.expires_in});
     // setCookie("google-token", response.tokenObj.id_token, {expires: new Date(response.tokenObj.expires_at), maxAge: response.tokenObj.expires_in});
     
     navigate('/');

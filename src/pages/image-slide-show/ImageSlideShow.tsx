@@ -10,13 +10,9 @@ import { useNavigate } from 'react-router-dom';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import { Button } from 'reactstrap';
 import path from 'path';
+import { PictureData } from '../../models/picture.data';
+import ImageCard from '../../components/image-card/ImageCard';
 
-export class PictureData {
-  name: string = '';
-  key?: string = '';
-  url: string = '';
-  favorite: boolean =  false;
-}
 
 const db: PictureData[] = [];
 const revDb: PictureData[] = [];
@@ -50,9 +46,9 @@ function ImageSlideShow() {
 
     // To Test: console.log("cookies", cookies["google-token"]);
     
-    // getImages();
+    getImages();
     // OR
-    getRandom();
+    // getRandom();
   }, []);
 
   const getImages = () => {
@@ -69,6 +65,8 @@ function ImageSlideShow() {
   const getRandom = () => {
     const randomNumber = Math.floor(Math.random() * 10) + 10; // Between 10 and 20
 
+    console.log(11);
+    
     axios.get(`https://api.pexels.com/v1/search?query=cat&per_page=${randomNumber}`, {
       headers: { "Authorization": "563492ad6f91700001000001992684dff806482995da956a82ac603c" }
     })
@@ -80,6 +78,8 @@ function ImageSlideShow() {
         for (let tempUrl of Array.from(db).reverse()) {
           revDb.push(tempUrl);
         }
+        console.log(22);
+        
         setLoading(false);
       })
   }
@@ -130,13 +130,7 @@ function ImageSlideShow() {
               key={character.name}
               onSwipe={(dir) => swiped(dir, character.name, index)}
             >
-              <div className='card-wrapper'>
-                <img className='card' src={character.url} />
-                <div className='card__favorite-btn'>
-                {!character.favorite && <AiOutlineHeart></AiOutlineHeart>}
-                {character.favorite && <AiFillHeart></AiFillHeart>}
-                  </div>
-              </div>
+              <ImageCard image={character} ></ImageCard>     
               </TinderCard>
           ))}
         </div>
