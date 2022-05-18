@@ -2,22 +2,21 @@ import React, { useState, useMemo, useRef, useEffect } from 'react'
 import ReactLoading from 'react-loading';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import TinderCard from 'react-tinder-card'
-import './../css/CardReview.css'
+import './../../css/CardReview.css'
+import './Favorites.css'
 import axios from 'axios'
 import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
+import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
+import ImageCard from '../../components/image-card/ImageCard';
+import { PictureData } from '../../models/picture.data';
 
-class PictureData {
-  name: string = '';
-  key?: string = '';
-  url: string = '';
-}
 
-const db: PictureData[] = [];
-const revDb: PictureData[] = [];
+let db: PictureData[] = [];
+let revDb: PictureData[] = [];
 let revIndex = 0;
 
-function ImageSlideShow() {
+function Favorites() {
   let swipeDir;
   let navigate = useNavigate();
 
@@ -35,20 +34,23 @@ function ImageSlideShow() {
   ];
 
   useEffect(() => {
-    if (!('google-token' in cookies)){
+    if (!('google-token' in cookies)) {
       navigate('/login');
     }
 
     // To Test: console.log("cookies", cookies["google-token"]);
-    
-    // getImages();
+
+    getImages();
     // OR
-    getRandom();
+    // getRandom();
   }, []);
 
   const getImages = () => {
+    db = [];
+    revDb = [];
     for (let i in images) {
-      db.push({ name: `img_${i}`, url: images[i] });
+      const isFavorite = Math.floor(Math.random() * 10) % 2 === 0;
+      db.push({ name: `img_${i}`, url: images[i], favorite: isFavorite });
     }
     for (let tempUrl of Array.from(db).reverse()) {
       revDb.push(tempUrl);
@@ -64,7 +66,8 @@ function ImageSlideShow() {
     })
       .then((res) => {
         for (var i in res.data.photos) {
-          db.push({ name: `img_${i}`, url: res.data.photos[i].src.original });
+          const isFavorite = Math.floor(Math.random() * 10) % 2 === 0;
+          db.push({ name: `img_${i}`, url: res.data.photos[i].src.original, favorite: isFavorite });
         }
         for (let tempUrl of Array.from(db).reverse()) {
           revDb.push(tempUrl);
@@ -78,7 +81,7 @@ function ImageSlideShow() {
     <ReactLoading type={'bars'} color={'#ffffff'} height={667} width={375} />
   );
 
-  const childRefs:React.Ref<any>[] = useMemo(
+  const childRefs: React.Ref<any>[] = useMemo(
     () =>
       Array(revDb.length)
         .fill(0)
@@ -105,40 +108,16 @@ function ImageSlideShow() {
 
   return (
 
-    <div className="fullC">
-      <h1>Your image based on Cats</h1>
-      <div className="row">
-        <img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/160/apple/285/cross-mark_274c.png" height="220px" className="directionF" />
-        <div className='cardContainer'>
-          {revDb.map((character, index) => (
-            // @ts-ignore
-            <TinderCard
-              ref={childRefs[index]}
-              className='swipe'
-              key={character.name}
-              onSwipe={(dir) => swiped(dir, character.name, index)}
-            >
-              <div className='card-wrapper'>
-                <img className='card' src={character.url} />
-              </div>
-              </TinderCard>
-          ))}
-        </div>
-        <img src="https://emojipedia-us.s3.amazonaws.com/source/skype/289/check-mark_2714-fe0f.png" height="300px" className="directionFN" />
+    <div className="favorites">
+      <h1 className="favorites__title">Your favorite Cats</h1>
+      <div className="favorites__container">
+        {revDb.map((character, index) => (
+          <ImageCard image={character} showLikeBtn={true}></ImageCard>
+        ))
+        }
       </div>
-      <div className='buttons'>
-
-      </div>
-
-      <h2 className='infoText'>
-        {swipeDir}
-      </h2>
-
-      <h2 className='infoText'>
-        Swipe left if you don't like the image or right if you think it looks awesome!
-      </h2>
     </div>
   )
 }
 
-export default ImageSlideShow
+export default Favorites
