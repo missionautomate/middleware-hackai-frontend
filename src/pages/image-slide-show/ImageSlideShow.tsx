@@ -14,8 +14,8 @@ import { PictureData } from '../../models/picture.data';
 import ImageCard from '../../components/image-card/ImageCard';
 
 
-const db: PictureData[] = [];
-const revDb: PictureData[] = [];
+let db: PictureData[] = [];
+let revDb: PictureData[] = [];
 let revIndex = 0;
 
 function ImageSlideShow() {
@@ -26,7 +26,7 @@ function ImageSlideShow() {
   const [currentIndex, setCurrentIndex] = useState(revDb.length - 1)
   const [lastDirection, setLastDirection] = useState('')
   const currentIndexRef = useRef(currentIndex)
-  const [cookies, setCookie, removeCookie] = useCookies(['google-token']);
+  const [cookies, setCookie, removeCookie] = useCookies(['google-token', 'account-id']);
 
   const images = [
     'https://images.unsplash.com/photo-1615789591457-74a63395c990?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8YmFieSUyMGNhdHxlbnwwfHwwfHw%3D&w=1000&q=80',
@@ -43,7 +43,7 @@ function ImageSlideShow() {
     if (!('google-token' in cookies)){
       navigate('/login');
     }
-
+  
     // To Test: console.log("cookies", cookies["google-token"]);
     
     getImages();
@@ -52,6 +52,7 @@ function ImageSlideShow() {
   }, []);
 
   const getImages = () => {
+
     for (let i in images) {
       const isFavorite = Math.floor(Math.random() * 10)%2 === 0;
       db.push({ name: `img_${i}`, url: images[i], favorite: isFavorite});
@@ -60,6 +61,7 @@ function ImageSlideShow() {
       revDb.push(tempUrl);
     }
     setLoading(false);
+ 
   }
 
   const getRandom = () => {
