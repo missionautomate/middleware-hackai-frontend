@@ -112,7 +112,7 @@ function Favorites() {
       <h1 className="favorites__title">Your favorite Cats</h1>
       <div className="favorites__container">
         {revDb.map((character, index) => (
-          <ImageCard image={character} showLikeBtn={true}></ImageCard>
+          <ImageCard image={character} showLikeBtn={true} openOnClick={true}></ImageCard>
         ))
         }
       </div>

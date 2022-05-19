@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react'
+import React, { useState, useMemo, useRef, useEffect, useContext } from 'react'
 import ReactLoading from 'react-loading';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import TinderCard from 'react-tinder-card'
@@ -12,6 +12,7 @@ import { Button } from 'reactstrap';
 import path from 'path';
 import { PictureData } from '../../models/picture.data';
 import ImageCard from '../../components/image-card/ImageCard';
+import UserContext from '../../context/User.context';
 
 
 const db: PictureData[] = [];
@@ -21,6 +22,7 @@ let revIndex = 0;
 function ImageSlideShow() {
   let swipeDir;
   let navigate = useNavigate();
+  const { user, changeUser } = useContext(UserContext);
 
   const [isLoading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(revDb.length - 1)
@@ -40,21 +42,30 @@ function ImageSlideShow() {
   }
 
   useEffect(() => {
-    if (!('google-token' in cookies)){
-      navigate('/login');
-    }
 
     // To Test: console.log("cookies", cookies["google-token"]);
-    
+
     getImages();
     // OR
     // getRandom();
   }, []);
 
+  const authGuard = () => {
+    if (!('google-token' in cookies)) {
+      console.log("QUESTION login...");
+      
+      // navigate('/login');
+    } else {
+      // TODO: if user is loged in, get user data from backend to set the context
+
+    }
+
+  }
+
   const getImages = () => {
     for (let i in images) {
-      const isFavorite = Math.floor(Math.random() * 10)%2 === 0;
-      db.push({ name: `img_${i}`, url: images[i], favorite: isFavorite});
+      const isFavorite = Math.floor(Math.random() * 10) % 2 === 0;
+      db.push({ name: `img_${i}`, url: images[i], favorite: isFavorite });
     }
     for (let tempUrl of Array.from(db).reverse()) {
       revDb.push(tempUrl);
@@ -66,20 +77,20 @@ function ImageSlideShow() {
     const randomNumber = Math.floor(Math.random() * 10) + 10; // Between 10 and 20
 
     console.log(11);
-    
+
     axios.get(`https://api.pexels.com/v1/search?query=cat&per_page=${randomNumber}`, {
       headers: { "Authorization": "563492ad6f91700001000001992684dff806482995da956a82ac603c" }
     })
       .then((res) => {
         for (var i in res.data.photos) {
-          const isFavorite = Math.floor(Math.random() * 10)%2 === 0;
-          db.push({ name: `img_${i}`, url: res.data.photos[i].src.original,favorite: isFavorite});
+          const isFavorite = Math.floor(Math.random() * 10) % 2 === 0;
+          db.push({ name: `img_${i}`, url: res.data.photos[i].src.original, favorite: isFavorite });
         }
         for (let tempUrl of Array.from(db).reverse()) {
           revDb.push(tempUrl);
         }
         console.log(22);
-        
+
         setLoading(false);
       })
   }
@@ -89,7 +100,7 @@ function ImageSlideShow() {
     <ReactLoading type={'bars'} color={'#ffffff'} height={667} width={375} />
   );
 
-  const childRefs:React.Ref<any>[] = useMemo(
+  const childRefs: React.Ref<any>[] = useMemo(
     () =>
       Array(revDb.length)
         .fill(0)
@@ -99,6 +110,8 @@ function ImageSlideShow() {
 
   // set last direction and decrease current index
   const swiped = async (direction: string, nameToDelete: string, index: number) => {
+    authGuard();
+
     if (direction === "right") {
       swipeDir = ("Yey, we are glad you liked it.");
     }
@@ -130,8 +143,8 @@ function ImageSlideShow() {
               key={character.name}
               onSwipe={(dir) => swiped(dir, character.name, index)}
             >
-              <ImageCard image={character} ></ImageCard>     
-              </TinderCard>
+              <ImageCard image={character} ></ImageCard>
+            </TinderCard>
           ))}
         </div>
         <img src="https://emojipedia-us.s3.amazonaws.com/source/skype/289/check-mark_2714-fe0f.png" height="300px" className="directionFN" />

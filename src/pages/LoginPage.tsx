@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react'
+import React, { useState, useMemo, useRef, useEffect, useContext } from 'react'
 import ReactLoading from 'react-loading';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import TinderCard from 'react-tinder-card'
@@ -7,6 +7,9 @@ import axios from 'axios'
 import GoogleLogin from 'react-google-login';
 import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
+import UserContext from '../context/User.context';
+import { UserBasics } from '../models/user-basics.data';
+import { UserRole } from '../components/enums/user-role';
 
 class PictureData {
   name: string = '';
@@ -19,7 +22,8 @@ const revDb: PictureData[] = [];
 let revIndex = 0;
 
 function LoginPage() {
-  let navigate = useNavigate();
+  const navigate = useNavigate();
+  const {user, changeUser} = useContext(UserContext);
 
   const [isLoading, setLoading] = useState(true);
   const [cookies, setCookie, removeCookie] = useCookies(['google-token']);
@@ -36,12 +40,19 @@ function LoginPage() {
   );
   
   const responseGoogle = (response: any) => {
-    // console.log(response);
+    console.log(response);
     const data = []
     data.push(response['accessToken'])
     data.push(response['profileObj'])
     console.log(data)
     setCookie("google-token", response.tokenObj.id_token, {expires: new Date(response.tokenObj.expires_at), maxAge: response.tokenObj.expires_in});
+    const newUser = new UserBasics();
+    newUser.userRole = UserRole.LOGED_IN_USER;
+    newUser.name = response['profileObj'].name;
+    newUser.email = response['profileObj'].email;
+    newUser.pictureURL = response['profileObj'].imageUrl;
+    // TODO: if user is loged in, get user data from backend to set the context
+    changeUser(newUser);
 
     fetch("https://middleware-hackai-backend.azurewebsites.net/login", {
       method: "POST",

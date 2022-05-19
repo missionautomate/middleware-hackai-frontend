@@ -13,6 +13,7 @@ import { PictureData } from '../../models/picture.data';
 export class ImageCardProps {
   image: PictureData = new PictureData();
   showLikeBtn?: boolean = false;
+  openOnClick?: boolean = false;
 }
 
 function ImageCard(props: ImageCardProps) {
@@ -23,7 +24,7 @@ function ImageCard(props: ImageCardProps) {
   }
 
   return (
-    <div className={`card-wrapper ${open ? 'card-wrapper--clicked' : 'card-wrapper--simple'}`} onClick={toggleImage}>
+    <div className={`card-wrapper ${ props.openOnClick && open ? 'card-wrapper--clicked' : 'card-wrapper--simple'}`} onClick={toggleImage}>
       <img className='card' src={props.image.url} />
       {props.showLikeBtn && <div className='card__favorite-btn'>
         {!props.image.favorite && <AiOutlineHeart></AiOutlineHeart>}
