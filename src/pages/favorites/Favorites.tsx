@@ -12,8 +12,7 @@ import ImageCard from '../../components/image-card/ImageCard';
 import { PictureData } from '../../models/picture.data';
 
 
-// let db: PictureData[] = [];
-// let revDb: PictureData[] = [];
+
 let revIndex = 0;
 
 function Favorites() {
