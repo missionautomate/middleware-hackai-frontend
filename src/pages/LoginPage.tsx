@@ -22,7 +22,7 @@ function LoginPage() {
   let navigate = useNavigate();
 
   const [isLoading, setLoading] = useState(true);
-  const [cookies, setCookie, removeCookie] = useCookies(['google-token']);
+  const [cookies, setCookie, removeCookie] = useCookies(['google-token','account-id']);
   
   useEffect(() => {
     if ('google-token' in cookies){
