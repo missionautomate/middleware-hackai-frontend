@@ -12,70 +12,48 @@ import ImageCard from '../../components/image-card/ImageCard';
 import { PictureData } from '../../models/picture.data';
 
 
-
+let db: PictureData[] = [];
+let revDb: PictureData[] = [];
 let revIndex = 0;
 
 function Favorites() {
   let swipeDir;
   let navigate = useNavigate();
 
-  const [db, updateDb] = useState<PictureData[]>([]);
-  const [revDb, updateRevDb] = useState<PictureData[]>([]);
-
   const [isLoading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(revDb.length - 1)
   const [lastDirection, setLastDirection] = useState('')
   const currentIndexRef = useRef(currentIndex)
-  const [cookies, setCookie, removeCookie] = useCookies(['google-token', 'account-id']);
+  const [cookies, setCookie, removeCookie] = useCookies(['google-token']);
 
+  const images = [
+    'https://images.unsplash.com/photo-1615789591457-74a63395c990?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8YmFieSUyMGNhdHxlbnwwfHwwfHw%3D&w=1000&q=80',
+    'https://cdn.pixabay.com/photo/2014/11/30/14/11/cat-551554__480.jpg',
+    'https://images.unsplash.com/photo-1583083527882-4bee9aba2eea?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8NHx8fGVufDB8fHx8&w=1000&q=80',
+    'https://imagesstoragesuperhero.blob.core.windows.net/generatedimages/download.jpg'
+  ];
 
   useEffect(() => {
-    if (!('google-token' in cookies)){
+    if (!('google-token' in cookies)) {
       navigate('/login');
     }
-      if('account-id' in cookies){
-        getUserImages(cookies['account-id']);
-      }
-  
-    // To Test: console.log("cookies", cookies["google-token"]);
-    
-    // OR
-    // getRandom();
-}, []);
 
-const getImages = (images:string[]) => {
-  let _db: PictureData[] = [];
-  let _revDb: PictureData[] = [];
-  
-  for (let i in images) {
-    const isFavorite = Math.floor(Math.random() * 10)%2 === 0;
-    _db.push({ name: `img_${i}`, url: images[i], favorite: isFavorite});
-  }
-  for (let tempUrl of Array.from(_db).reverse()) {
-    _revDb.push(tempUrl);
-  }
-  updateDb(_db);
-  updateRevDb(_revDb);
-  setLoading(false);
-}
+    getImages();
 
-const getUserImages = (account_id:string) => {
-  let _body = {
-    'account_id': account_id
-  }
-  let image_urls:string[] = [];
-  fetch("https://middleware-hackai-backend.azurewebsites.net/pull_images_for_current_user", {
-    method: "POST",
-    headers: {'Content-Type': 'application/json'}, 
-    body: JSON.stringify(_body)
-  }).then( async res => {
-    let res_json = await res.json();
-    getImages(res_json["image_urls"]);
-  });
+  }, []);
 
-  setLoading(false);
-  return image_urls;
-}
+  const getImages = () => {
+    db = [];
+    revDb = [];
+    for (let i in images) {
+      const isFavorite = Math.floor(Math.random() * 10) % 2 === 0;
+      db.push({ name: `img_${i}`, url: images[i], favorite: isFavorite });
+    }
+    for (let tempUrl of Array.from(db).reverse()) {
+      revDb.push(tempUrl);
+    }
+    setLoading(false);
+  }
 
   const getRandom = () => {
     const randomNumber = Math.floor(Math.random() * 10) + 10; // Between 10 and 20
@@ -131,7 +109,7 @@ const getUserImages = (account_id:string) => {
       <h1 className="favorites__title">Your favorite Cats</h1>
       <div className="favorites__container">
         {revDb.map((character, index) => (
-          <ImageCard image={character} showLikeBtn={true}></ImageCard>
+          <ImageCard image={character} showLikeBtn={true} openOnClick={true}></ImageCard>
         ))
         }
       </div>

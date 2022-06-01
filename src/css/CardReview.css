@@ -9,7 +9,7 @@
   background: linear-gradient(#e66465, #91e5da);
 }
 
-#root>div {
+.fullC {
   display: flex;
   flex-direction: column;
   justify-content: center;
