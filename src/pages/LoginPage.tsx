@@ -26,7 +26,7 @@ function LoginPage() {
   const {user, changeUser} = useContext(UserContext);
 
   const [isLoading, setLoading] = useState(true);
-  const [cookies, setCookie, removeCookie] = useCookies(['google-token']);
+  const [cookies, setCookie, removeCookie] = useCookies(['google-token', 'google-id']);
   
   useEffect(() => {
     if ('google-token' in cookies){
@@ -46,6 +46,7 @@ function LoginPage() {
     data.push(response['profileObj'])
     console.log(data)
     setCookie("google-token", response.tokenObj.id_token, {expires: new Date(response.tokenObj.expires_at), maxAge: response.tokenObj.expires_in});
+    setCookie("google-id", response['profileObj'].googleId)
     const newUser = new UserBasics();
     newUser.userRole = UserRole.LOGED_IN_USER;
     newUser.name = response['profileObj'].name;
