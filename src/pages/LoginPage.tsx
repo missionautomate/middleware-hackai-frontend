@@ -93,7 +93,7 @@ function LoginPage() {
       <div className="row">
         <div className='cardContainer'>
           <GoogleLogin
-            clientId="1028975180951-gegig2nucp4tufumpqmc04gqhofuilrj.apps.googleusercontent.com"
+            clientId="826881705464-o9n2j3ic0n4ucfvmoicutgt32d7lgs29.apps.googleusercontent.com"
             buttonText="Login with Google"
             onSuccess={responseGoogle}
             onFailure={responseGoogle}
