@@ -38,11 +38,8 @@ function Favorites() {
       navigate('/login');
     }
 
-    // To Test: console.log("cookies", cookies["google-token"]);
-
     getImages();
-    // OR
-    // getRandom();
+
   }, []);
 
   const getImages = () => {

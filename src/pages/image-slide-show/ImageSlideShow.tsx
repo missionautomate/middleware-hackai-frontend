@@ -52,7 +52,7 @@ function ImageSlideShow() {
     // getRandom();
   }, []);
 
-  
+
 
   const authGuard = () => {
     if (!("google-token" in cookies)) {
@@ -145,7 +145,7 @@ function ImageSlideShow() {
       </>
     );
 
-   
+
   };
 
   const LoginGuard = () => {
@@ -154,8 +154,8 @@ function ImageSlideShow() {
     }else{
       navigate('/favorites')
     }
-    
-    
+
+
   }
 
   // set last direction and decrease current index
