@@ -27,7 +27,7 @@ function ImageSlideShow() {
   const [lastDirection, setLastDirection] = useState('')
   const currentIndexRef = useRef(currentIndex)
   const [cookies, setCookie, removeCookie] = useCookies(['google-token', 'account-id']);
-  const [images,setImages]=useState<any>()
+  const [images, setImages] = useState<any>()
   // let images = [
   //   'https://images.unsplash.com/photo-1615789591457-74a63395c990?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8YmFieSUyMGNhdHxlbnwwfHwwfHw%3D&w=1000&q=80',
   //   'https://cdn.pixabay.com/photo/2014/11/30/14/11/cat-551554__480.jpg',
@@ -39,66 +39,66 @@ function ImageSlideShow() {
   }
 
   useEffect(() => {
-    if (!('google-token' in cookies)){
+    if (!('google-token' in cookies)) {
       navigate('/login');
     }
     fetch("http://localhost:8000/generate-images", {
-    method: "GET",
-    headers: {'Content-Type': 'application/json'},
-  })
-
-    // To Test: console.log("cookies", cookies["google-token"]);
+      method: "GET",
+      headers: { 'Content-Type': 'application/json' },
+    })
+    
     fetch("http://localhost:8000/get-images", {
-    method: "GET",
-    headers: {'Content-Type': 'application/json'},
-  }).then( async res => {
-    let images_json = await res.json();
-    const image = []
-    for(var index in images_json["images"])
-    { 
+      method: "GET",
+      headers: { 'Content-Type': 'application/json' },
+    }).then(async res => {
+      await new Promise(f => setTimeout(f, 5000));
+      let images_json = await res.json();
+      const image = []
+      
+      for (var index in images_json["images"]) {
         image.push(images_json["images"][index]["path"])
-    }
-    setImages(image)
-  })
+      }
+      setImages(image)
+    }).catch(error => { console.log(error) });
 
-
-    console.log(images)
-    getImages();
-    // OR
-    // getRandom();
   }, []);
+  useEffect(() => {
+    if (images) {
+      getImages();
+    }
+
+  }, [images])
 
   const getImages = () => {
-
     for (let i in images) {
-      const isFavorite = Math.floor(Math.random() * 10)%2 === 0;
-      db.push({ name: `img_${i}`, url: images[i], favorite: isFavorite});
+      const isFavorite = Math.floor(Math.random() * 10) % 2 === 0;
+      db.push({ name: `img_${i}`, url: images[i], favorite: isFavorite });
     }
     for (let tempUrl of Array.from(db).reverse()) {
       revDb.push(tempUrl);
     }
     setLoading(false);
- 
+
   }
 
   const getRandom = () => {
     const randomNumber = Math.floor(Math.random() * 10) + 10; // Between 10 and 20
 
     console.log(11);
-    
+
     axios.get(`https://api.pexels.com/v1/search?query=cat&per_page=${randomNumber}`, {
       headers: { "Authorization": "563492ad6f91700001000001992684dff806482995da956a82ac603c" }
     })
       .then((res) => {
         for (var i in res.data.photos) {
-          const isFavorite = Math.floor(Math.random() * 10)%2 === 0;
-          db.push({ name: `img_${i}`, url: res.data.photos[i].src.original,favorite: isFavorite});
+          const isFavorite = Math.floor(Math.random() * 10) % 2 === 0;
+          db.push({ name: `img_${i}`, url: res.data.photos[i].src.original, favorite: isFavorite });
         }
         for (let tempUrl of Array.from(db).reverse()) {
           revDb.push(tempUrl);
         }
         console.log(22);
-        
+
         setLoading(false);
       })
   }
@@ -108,7 +108,7 @@ function ImageSlideShow() {
     <ReactLoading type={'bars'} color={'#ffffff'} height={667} width={375} />
   );
 
-  const childRefs:React.Ref<any>[] = useMemo(
+  const childRefs: React.Ref<any>[] = useMemo(
     () =>
       Array(revDb.length)
         .fill(0)
@@ -149,8 +149,8 @@ function ImageSlideShow() {
               key={character.name}
               onSwipe={(dir) => swiped(dir, character.name, index)}
             >
-              <ImageCard image={character} ></ImageCard>     
-              </TinderCard>
+              <ImageCard image={character} ></ImageCard>
+            </TinderCard>
           ))}
         </div>
         <img src="https://emojipedia-us.s3.amazonaws.com/source/skype/289/check-mark_2714-fe0f.png" height="300px" className="directionFN" />
