@@ -10,9 +10,6 @@ import { useNavigate } from 'react-router-dom';
 import UserContext from '../context/User.context';
 import { UserBasics } from '../models/user-basics.data';
 import { UserRole } from '../components/enums/user-role';
-import {useGoogleOneTapLogin} from 'react-google-one-tap-login';
-import googleOneTap from 'google-one-tap';
-import GoogleOneTapLogin from './../components/GoogleOneTap'
 import MicrosoftLogin from "react-microsoft-login";
 
 class PictureData {
