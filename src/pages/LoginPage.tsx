@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react'
+import React, { useState, useMemo, useRef, useEffect, useContext } from 'react'
 import ReactLoading from 'react-loading';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import TinderCard from 'react-tinder-card'
@@ -7,6 +7,10 @@ import axios from 'axios'
 import GoogleLogin from 'react-google-login';
 import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
+import UserContext from '../context/User.context';
+import { UserBasics } from '../models/user-basics.data';
+import { UserRole } from '../components/enums/user-role';
+import {useGoogleOneTapLogin} from 'react-google-one-tap-login';
 
 class PictureData {
   name: string = '';
@@ -19,10 +23,11 @@ const revDb: PictureData[] = [];
 let revIndex = 0;
 
 function LoginPage() {
-  let navigate = useNavigate();
+  const navigate = useNavigate();
+  const {user, changeUser} = useContext(UserContext);
 
   const [isLoading, setLoading] = useState(true);
-  const [cookies, setCookie, removeCookie] = useCookies(['google-token','account-id']);
+  const [cookies, setCookie, removeCookie] = useCookies(['google-token', 'google-id']);
   
   useEffect(() => {
     if ('google-token' in cookies){
@@ -36,12 +41,20 @@ function LoginPage() {
   );
   
   const responseGoogle = (response: any) => {
-    // console.log(response);
+    console.log(response);
     const data = []
     data.push(response['accessToken'])
     data.push(response['profileObj'])
     console.log(data)
     setCookie("google-token", response.tokenObj.id_token, {expires: new Date(response.tokenObj.expires_at), maxAge: response.tokenObj.expires_in});
+    setCookie("google-id", response['profileObj'].googleId)
+    const newUser = new UserBasics();
+    newUser.userRole = UserRole.LOGED_IN_USER;
+    newUser.name = response['profileObj'].name;
+    newUser.email = response['profileObj'].email;
+    newUser.pictureURL = response['profileObj'].imageUrl;
+    // TODO: if user is loged in, get user data from backend to set the context
+    changeUser(newUser);
 
     fetch("https://middleware-hackai-backend.azurewebsites.net/login", {
       method: "POST",
@@ -73,6 +86,23 @@ function LoginPage() {
     return (<Loading />)
   }
 
+  function onSignIn(googleUser:any) {
+    var profile = googleUser.getBasicProfile();
+    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+    console.log('Name: ' + profile.getName());
+    console.log('Image URL: ' + profile.getImageUrl());
+    console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+  }
+
+  // useGoogleOneTapLogin({
+  //   onError: error => console.log(error),
+  //   onSuccess: response => console.log(response),
+  //   googleAccountConfigs: {
+  //     client_id: "826881705464-0nim7umsvtefh23q5pth5rgt4cdk4qge.apps.googleusercontent.com"
+  //   },
+  // });
+
+
   return (
 
     <div className="fullC">
@@ -80,13 +110,21 @@ function LoginPage() {
       <h1>Login</h1>
       <div className="row">
         <div className='cardContainer'>
+
+        {/* <div className="g-signin2" data-onsuccess={onSignIn}></div> */}
+        {/* <div id="g_id_onload"
+          data-client_id="826881705464-0nim7umsvtefh23q5pth5rgt4cdk4qge.apps.googleusercontent.com"
+          data-login_uri="https://your.domain/your_login_endpoint"
+          data-context="use">
+      </div> */}
           <GoogleLogin
-            clientId="1028975180951-gegig2nucp4tufumpqmc04gqhofuilrj.apps.googleusercontent.com"
+            clientId="826881705464-o9n2j3ic0n4ucfvmoicutgt32d7lgs29.apps.googleusercontent.com"
             buttonText="Login with Google"
             onSuccess={responseGoogle}
             onFailure={responseGoogle}
-            cookiePolicy="single_host_origin"
+            cookiePolicy={'single_host_origin'}
           />
+          {/* <GoogleOneTapLogin onError={(error) => console.log(error} onSuccess={(response) => console.log(response} googleAccountConfigs={{ client_id: "826881705464-0nim7umsvtefh23q5pth5rgt4cdk4qge.apps.googleusercontent.com" }} /> */}
         </div>
       </div>
     </div>
