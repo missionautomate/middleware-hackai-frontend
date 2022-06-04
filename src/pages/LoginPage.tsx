@@ -90,22 +90,6 @@ function LoginPage() {
       <h1>Login</h1>
       <div className="row">
         <div className='cardContainer'>
-
-        {/* <div className="g-signin2" data-onsuccess={onSignIn}></div> */}
-        {/* <div id="g_id_onload"
-          data-client_id="826881705464-0nim7umsvtefh23q5pth5rgt4cdk4qge.apps.googleusercontent.com"
-          data-login_uri="https://your.domain/your_login_endpoint"
-          data-context="use">
-      </div> */}
-          {/* <GoogleLogin
-            clientId="1028975180951-gegig2nucp4tufumpqmc04gqhofuilrj.apps.googleusercontent.com"
-            buttonText="Login with Google"
-            onSuccess={responseGoogle}
-            onFailure={responseGoogle}
-            cookiePolicy={'single_host_origin'}
-          /> */}
-          {/* <GoogleOneTapLogin></GoogleOneTapLogin> */}
-          {/* <GoogleOneTapLogin onError={(error) => console.log(error} onSuccess={(response) => console.log(response} googleAccountConfigs={{ client_id: "826881705464-0nim7umsvtefh23q5pth5rgt4cdk4qge.apps.googleusercontent.com" }} /> */}
           <MicrosoftLogin clientId="20fdaf3b-cc20-4238-9fc0-183433e023ff" authCallback={responseGoogle} />
         </div>
       </div>
