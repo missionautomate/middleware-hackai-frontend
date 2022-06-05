@@ -31,28 +31,43 @@ function ImageSlideShow() {
   const [lastDirection, setLastDirection] = useState("");
   const currentIndexRef = useRef(currentIndex);
   const [cookies, setCookie, removeCookie] = useCookies(["google-token"]);
-
-
-  const images = [
-    "https://images.unsplash.com/photo-1615789591457-74a63395c990?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8YmFieSUyMGNhdHxlbnwwfHwwfHw%3D&w=1000&q=80",
-    "https://cdn.pixabay.com/photo/2014/11/30/14/11/cat-551554__480.jpg",
-    "https://images.unsplash.com/photo-1583083527882-4bee9aba2eea?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8NHx8fGVufDB8fHx8&w=1000&q=80",
-    "https://i.pinimg.com/originals/7e/0a/50/7e0a507de8cf8b46e0f2665f1058ef37.jpg",
-  ];
+  const [images,setImages]=useState<any>()
 
   const navigateTo = (path: string) => () => {
     return navigate(path);
   };
 
   useEffect(() => {
-    // To Test: console.log("cookies", cookies["google-token"]);
+    if (!('google-token' in cookies)) {
+      navigate('/login');
+    }
+    fetch("http://localhost:8000/generate-images", {
+      method: "GET",
+      headers: { 'Content-Type': 'application/json' },
+    })
 
-    getImages();
-    // OR
-    // getRandom();
+    fetch("http://localhost:8000/get-images", {
+      method: "GET",
+      headers: { 'Content-Type': 'application/json' },
+    }).then(async res => {
+      await new Promise(f => setTimeout(f, 4000));
+      let images_json = await res.json();
+      const image = []
+      
+      for (var index in images_json["images"]) {
+        image.push(images_json["images"][index]["path"])
+      }
+      setImages(image)
+      
+    }).catch(error => { console.log(error) });
+
   }, []);
+  useEffect(() => {
+    if (images) {
+      getImages();
+    }
 
-
+  }, [images])
 
   const authGuard = () => {
     if (!("google-token" in cookies)) {
