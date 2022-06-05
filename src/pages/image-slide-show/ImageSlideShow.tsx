@@ -31,7 +31,7 @@ function ImageSlideShow() {
   const [lastDirection, setLastDirection] = useState("");
   const currentIndexRef = useRef(currentIndex);
   const [cookies, setCookie, removeCookie] = useCookies(["google-token"]);
-  const [images,setImages]=useState<any>()
+  const [images, setImages] = useState<any>()
 
   const navigateTo = (path: string) => () => {
     return navigate(path);
@@ -41,25 +41,27 @@ function ImageSlideShow() {
     if (!('google-token' in cookies)) {
       navigate('/login');
     }
-    fetch("http://localhost:8000/generate-images", {
+    fetch("https://middleware-hackai-backend.azurewebsites.net/generate-images", {
       method: "GET",
       headers: { 'Content-Type': 'application/json' },
+    }).then(() => {
+      fetch("https://middleware-hackai-backend.azurewebsites.net/get-images", {
+        method: "GET",
+        headers: { 'Content-Type': 'application/json' },
+      }).then(async res => {
+        // await new Promise(f => setTimeout(f, 4000));
+        let images_json = await res.json();
+        const image = []
+
+        for (var index in images_json["images"]) {
+          image.push(images_json["images"][index]["path"])
+        }
+        setImages(image)
+
+      }).catch(error => { console.log(error) });
     })
 
-    fetch("http://localhost:8000/get-images", {
-      method: "GET",
-      headers: { 'Content-Type': 'application/json' },
-    }).then(async res => {
-      await new Promise(f => setTimeout(f, 4000));
-      let images_json = await res.json();
-      const image = []
-      
-      for (var index in images_json["images"]) {
-        image.push(images_json["images"][index]["path"])
-      }
-      setImages(image)
-      
-    }).catch(error => { console.log(error) });
+
 
   }, []);
   useEffect(() => {
@@ -152,7 +154,7 @@ function ImageSlideShow() {
             <Button variant="secondary" onClick={handleClose}>
               Close
             </Button>
-            <Button variant="primary" onClick={ () => {setShow(false); navigate('/login');}}>
+            <Button variant="primary" onClick={() => { setShow(false); navigate('/login'); }}>
               Log in
             </Button>
           </Modal.Footer>
@@ -165,8 +167,8 @@ function ImageSlideShow() {
 
   const LoginGuard = () => {
     if (!('google-token' in cookies)) {
-      render(<LoginModal/>)
-    }else{
+      render(<LoginModal />)
+    } else {
       navigate('/favorites')
     }
 
