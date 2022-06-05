@@ -18,7 +18,7 @@ export class ImageCardProps {
 
 function ImageCard(props: ImageCardProps) {
   const [open, setOpen] = useState(false);
-  const [cookies, setCookie, removeCookie] = useCookies(["google-id"]);
+  const [cookies, setCookie, removeCookie] = useCookies(["unique-id"]);
 
   const toggleImage = () => {
     setOpen(!open);
@@ -27,7 +27,7 @@ function ImageCard(props: ImageCardProps) {
   const removeImage = (imgLink: String) => () => {
     var parts = imgLink.split('/');
     var imgName = parts[parts.length - 1];
-    const data = {"googleId": cookies['google-id'], "imgName": imgName};
+    const data = {"azureId": cookies['unique-id'], "imgName": imgName};
     console.log(JSON.stringify(data));
     fetch("https://middleware-hackai-backend.azurewebsites.net/remove-image", {
       method: "POST",
