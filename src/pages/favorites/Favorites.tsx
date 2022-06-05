@@ -24,7 +24,7 @@ function Favorites() {
   const [currentIndex, setCurrentIndex] = useState(revDb.length - 1)
   const [lastDirection, setLastDirection] = useState('')
   const currentIndexRef = useRef(currentIndex)
-  const [cookies, setCookie, removeCookie] = useCookies(['google-token']);
+  const [cookies, setCookie, removeCookie] = useCookies(['google-token', 'unique-id']);
 
   const images = [
     'https://images.unsplash.com/photo-1615789591457-74a63395c990?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8YmFieSUyMGNhdHxlbnwwfHwwfHw%3D&w=1000&q=80',
@@ -45,59 +45,27 @@ function Favorites() {
   const getImages = () => {
     db = [];
     revDb = [];
-    for (let i in images) {
-      const isFavorite = Math.floor(Math.random() * 10) % 2 === 0;
-      db.push({ name: `img_${i}`, url: images[i], favorite: isFavorite });
-    }
-    for (let tempUrl of Array.from(db).reverse()) {
-      revDb.push(tempUrl);
-    }
-    setLoading(false);
-  }
-
-  const getRandom = () => {
-    const randomNumber = Math.floor(Math.random() * 10) + 10; // Between 10 and 20
-
-    axios.get(`https://api.pexels.com/v1/search?query=cat&per_page=${randomNumber}`, {
-      headers: { "Authorization": "563492ad6f91700001000001992684dff806482995da956a82ac603c" }
+    console.log(JSON.stringify(cookies['unique-id']));
+    fetch("https://middleware-hackai-backend.azurewebsites.net/get-img", {
+      method: "POST",
+      headers: {'Content-Type': 'application/json'}, 
+      body: JSON.stringify(cookies['unique-id'])
+    }).then(res => {
+      return res.json();
+    }).then(data => {
+      for (var i in data){
+        console.log(data[i])
+        db.push({ name: `img_${i}`, url: "https://imagesstoragesuperhero.blob.core.windows.net/generatedimages/" + String(data[i]), favorite: true });
+      }
+      for (let tempUrl of Array.from(db).reverse()) {
+        revDb.push(tempUrl);
+      }
     })
-      .then((res) => {
-        for (var i in res.data.photos) {
-          const isFavorite = Math.floor(Math.random() * 10) % 2 === 0;
-          db.push({ name: `img_${i}`, url: res.data.photos[i].src.original, favorite: isFavorite });
-        }
-        for (let tempUrl of Array.from(db).reverse()) {
-          revDb.push(tempUrl);
-        }
-        setLoading(false);
-      })
   }
-
 
   const Loading = () => (
     <ReactLoading type={'bars'} color={'#ffffff'} height={667} width={375} />
   );
-
-  const childRefs: React.Ref<any>[] = useMemo(
-    () =>
-      Array(revDb.length)
-        .fill(0)
-        .map((i) => React.createRef()),
-    []
-  )
-
-  // set last direction and decrease current index
-  const swiped = async (direction: string, nameToDelete: string, index: number) => {
-    if (direction === "right") {
-      swipeDir = ("Yey, we are glad you liked it.");
-    }
-    setLastDirection(direction);
-    revIndex = revIndex + 1;
-
-    if (revIndex >= db.length) {
-      window.location.reload();
-    }
-  }
 
   if (isLoading) {
     return (<Loading />)

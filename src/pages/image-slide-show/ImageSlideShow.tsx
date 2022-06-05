@@ -30,7 +30,7 @@ function ImageSlideShow() {
   const [currentIndex, setCurrentIndex] = useState(revDb.length - 1);
   const [lastDirection, setLastDirection] = useState("");
   const currentIndexRef = useRef(currentIndex);
-  const [cookies, setCookie, removeCookie] = useCookies(["google-token"]);
+  const [cookies, setCookie, removeCookie] = useCookies(["google-token", "unique-id"]);
 
 
   const images = [
@@ -165,8 +165,19 @@ function ImageSlideShow() {
     index: number
   ) => {
     authGuard();
-
+    
     if (direction === "right") {
+      var imgLink = revDb[index].url
+      var parts = imgLink.split('/');
+      var imgName = parts[parts.length - 1];
+      const data = {"azureId": cookies['unique-id'], "imgName": imgName};
+      fetch("https://middleware-hackai-backend.azurewebsites.net/add-image", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'}, 
+        body: JSON.stringify(data)
+      }).then(res => {
+        console.log("Request complete! response:", res);
+      });
       swipeDir = "Yey, we are glad you liked it.";
     }
     setLastDirection(direction);
@@ -184,7 +195,7 @@ function ImageSlideShow() {
   return (
     <div className="fullC">
       <Button onClick={LoginGuard}>Favorites</Button>
-      <h1>Your image based on Cats</h1>
+      <h1>Your brand new superheros are here</h1>
       <div className="row">
         <img
           src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/160/apple/285/cross-mark_274c.png"
@@ -215,8 +226,7 @@ function ImageSlideShow() {
       <h2 className="infoText">{swipeDir}</h2>
 
       <h2 className="infoText">
-        Swipe left if you don't like the image or right if you think it looks
-        awesome!
+        Swipe left or right to go to the next superhero
       </h2>
     </div>
   );
