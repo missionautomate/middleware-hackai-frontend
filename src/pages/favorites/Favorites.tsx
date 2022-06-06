@@ -45,7 +45,6 @@ function Favorites() {
   const getImages = () => {
     db = [];
     revDb = [];
-    console.log(JSON.stringify(cookies['unique-id']));
     fetch("https://middleware-hackai-backend.azurewebsites.net/get-img", {
       method: "POST",
       headers: {'Content-Type': 'application/json'}, 
@@ -54,7 +53,6 @@ function Favorites() {
       return res.json();
     }).then(data => {
       for (var i in data){
-        console.log(data[i])
         db.push({ name: `img_${i}`, url: "https://imagesstoragesuperhero.blob.core.windows.net/savedimages/" + String(data[i]), favorite: true });
       }
       for (let tempUrl of Array.from(db).reverse()) {
