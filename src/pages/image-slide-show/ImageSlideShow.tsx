@@ -209,7 +209,7 @@ function ImageSlideShow() {
   return (
     <div className="fullC">
       <Button onClick={LoginGuard}>Favorites</Button>
-      <h1>Your brand new superheros are here</h1>
+      <h1>Your brand new superheroes are here</h1>
       <div className="row">
         <div className="cardContainer">
           {revDb.map((character, index) => (
@@ -225,9 +225,6 @@ function ImageSlideShow() {
           ))}
         </div>
       </div>
-      <div className="buttons"></div>
-
-      <h2 className="infoText">{swipeDir}</h2>
 
       <h2 className="infoText">
         Swipe right if you like the superhero or left if you do not
