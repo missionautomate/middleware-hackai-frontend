@@ -55,13 +55,27 @@ function Favorites() {
     }).then(data => {
       for (var i in data){
         console.log(data[i])
-        db.push({ name: `img_${i}`, url: "https://imagesstoragesuperhero.blob.core.windows.net/generatedimages/" + String(data[i]), favorite: true });
+        db.push({ name: `img_${i}`, url: "https://imagesstoragesuperhero.blob.core.windows.net/savedimages/" + String(data[i]), favorite: true });
       }
       for (let tempUrl of Array.from(db).reverse()) {
         revDb.push(tempUrl);
       }
+      setLoading(false);
     })
   }
+  // const getImages = () => {
+  //   db = [];
+  //   revDb = [];
+  //   for (let i in images) {
+  //     const isFavorite = Math.floor(Math.random() * 10) % 2 === 0;
+  //     db.push({ name: `img_${i}`, url: images[i], favorite: isFavorite });
+  //   }
+  //   for (let tempUrl of Array.from(db).reverse()) {
+  //     revDb.push(tempUrl);
+  //   }
+  //   console.log()
+  //   setLoading(false);
+  // }
 
   const Loading = () => (
     <ReactLoading type={'bars'} color={'#ffffff'} height={667} width={375} />
@@ -74,7 +88,7 @@ function Favorites() {
   return (
 
     <div className="favorites">
-      <h1 className="favorites__title">Your favorite Cats</h1>
+      <h1 className="favorites__title">Your favorite superheroes</h1>
       <div className="favorites__container">
         {revDb.map((character, index) => (
           <ImageCard image={character} showLikeBtn={true} openOnClick={true}></ImageCard>
