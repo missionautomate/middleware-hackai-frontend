@@ -28,7 +28,7 @@ function LoginPage() {
   const {user, changeUser} = useContext(UserContext);
 
   const [isLoading, setLoading] = useState(true);
-  const [cookies, setCookie, removeCookie] = useCookies(['google-token', 'unique-id']);
+  const [cookies, setCookie, removeCookie] = useCookies(['google-token', 'unique-id', 'user-name']);
   
   useEffect(() => {
     if ('google-token' in cookies){
@@ -50,6 +50,7 @@ function LoginPage() {
     console.log(data)
     setCookie("google-token", response['accessToken'], {expires: response['expiresOn']});
     setCookie("unique-id", response['account']['accountIdentifier'])
+    setCookie("user-name", response['account']['name'])
     const newUser = new UserBasics();
     newUser.userRole = UserRole.LOGED_IN_USER;
     newUser.name = response['account']['name'];

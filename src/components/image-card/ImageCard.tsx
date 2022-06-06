@@ -36,8 +36,8 @@ function ImageCard(props: ImageCardProps) {
     }).then(res => {
       console.log("Request complete! response:", res);
     });
+    window.location.reload();
   }
-  console.log(props.image.url);
   return (
     <div className={`card-wrapper ${ props.openOnClick && open ? 'card-wrapper--clicked' : 'card-wrapper--simple'}`} >
       <img className='card' src={props.image.url} onClick={toggleImage}/>

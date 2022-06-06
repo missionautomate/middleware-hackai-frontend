@@ -38,9 +38,9 @@ function ImageSlideShow() {
   };
 
   useEffect(() => {
-    if (!('google-token' in cookies)) {
-      navigate('/login');
-    }
+    // if (!('google-token' in cookies)) {
+    //   navigate('/login');
+    // }
     fetch("https://middleware-hackai-backend.azurewebsites.net/generate-images", {
       method: "GET",
       headers: { 'Content-Type': 'application/json' },
@@ -70,16 +70,6 @@ function ImageSlideShow() {
     }
 
   }, [images])
-
-  const authGuard = () => {
-    if (!("google-token" in cookies)) {
-      console.log("QUESTION login...");
-
-      // navigate('/login');
-    } else {
-      // TODO: if user is loged in, get user data from backend to set the context
-    }
-  };
 
   const getImages = () => {
     for (let i in images) {
@@ -126,7 +116,10 @@ function ImageSlideShow() {
   };
 
   const Loading = () => (
-    <ReactLoading type={"bars"} color={"#ffffff"} height={667} width={375} />
+    <div>
+      <h1>Please wait as we are getting your superheros ready for show off</h1>
+      <ReactLoading type={"bars"} color={"#ffffff"} height={667} width={375} />
+    </div>
   );
 
   const childRefs: React.Ref<any>[] = useMemo(
@@ -181,7 +174,11 @@ function ImageSlideShow() {
     nameToDelete: string,
     index: number
   ) => {
-    authGuard();
+
+    if (!('google-token' in cookies)) {
+      render(<LoginModal />)
+      return 0;
+    }
     
     if (direction === "right") {
       var imgLink = revDb[index].url
@@ -214,11 +211,6 @@ function ImageSlideShow() {
       <Button onClick={LoginGuard}>Favorites</Button>
       <h1>Your brand new superheros are here</h1>
       <div className="row">
-        <img
-          src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/160/apple/285/cross-mark_274c.png"
-          height="220px"
-          className="directionF"
-        />
         <div className="cardContainer">
           {revDb.map((character, index) => (
             // @ts-ignore
@@ -232,18 +224,13 @@ function ImageSlideShow() {
             </TinderCard>
           ))}
         </div>
-        <img
-          src="https://emojipedia-us.s3.amazonaws.com/source/skype/289/check-mark_2714-fe0f.png"
-          height="300px"
-          className="directionFN"
-        />
       </div>
       <div className="buttons"></div>
 
       <h2 className="infoText">{swipeDir}</h2>
 
       <h2 className="infoText">
-        Swipe left or right to go to the next superhero
+        Swipe right if you like the superhero or left if you do not
       </h2>
     </div>
   );

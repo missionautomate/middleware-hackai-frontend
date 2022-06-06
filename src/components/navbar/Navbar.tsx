@@ -18,6 +18,8 @@ function Navbar() {
   }
 
   const logOut = () => () => {
+    removeCookie('user-name');
+    removeCookie('unique-id');
     removeCookie('google-token', {path:'/'});
     console.log("check");
     // removeCookie("google-token");
@@ -61,9 +63,26 @@ function Navbar() {
     }
   }
 
+  console.log(user);
+  if(cookies['unique-id'] != undefined && cookies['user-name'] != undefined){
+    return (
+      <div className={`navbar`}>
+          <div className={`navbar__left`}>
+            <div className={`navbar__elem`} onClick={navigateTo('/')}>Home</div>
+          </div>
+          <div className={`navbar__right`}>
+            <div className={`navbar__elem`} onClick={navigateTo('/favorites')}>
+              <span>{cookies['user-name']}</span> <img src='https://upload.wikimedia.org/wikipedia/commons/d/d6/Connecticut_ComiCONN_Superhero_Mascot..jpg' alt='picture'></img>
+            </div>
+            <div className={`navbar__elem`} onClick={logOut()}>
+              <img src='https://i.postimg.cc/52qrjk5g/kisspng-computer-icons-font-logs-5ae2d19bd44999-4333965515248142358695.png' alt='picture'></img>
+            </div>
+          </div>
+        </div>
+    );
+  }
   return (
     <div className={`navbar`}>
-      {/* <div className={`navbar__content`}> */}
         <div className={`navbar__left`}>
           <div className={`navbar__elem`} onClick={navigateTo('/')}>Home</div>
           {user.userRole === UserRole.LOGED_IN_USER && <div className={`navbar__elem`} onClick={LoginGuard}>Gallery</div>}
